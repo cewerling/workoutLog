@@ -5,7 +5,7 @@ var User = sequelize.import('../models/user');
 var Log = sequelize.import('../models/log');
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
-
+const validateSession = require('../middleware/validate-session');
 
 /****************************************
  * User Login
@@ -48,7 +48,7 @@ router.post('/login', (req, res) => {
 * CREATE Workout Log
 ****************************************/
 
-router.post('/log', (req, res) => {
+router.post('/log', validateSession, (req, res) => {
 
     const logFromRequest = {
         "description": req.body.description,
@@ -70,7 +70,7 @@ router.post('/log', (req, res) => {
 * GET All Logs for Individual User
 ****************************************/
 
-router.get('/log', (req, res) => {
+router.get('/log', validateSession, (req, res) => {
 
     Log.findAll({
         where: {owner: req.body.owner}
@@ -87,7 +87,7 @@ router.get('/log', (req, res) => {
 * GET Individual Logs by ID for a User
 ****************************************/
 
-router.get('/log/:id', (req, res) => {
+router.get('/log/:id', validateSession, (req, res) => {
 
     Log.findAll({
         where: {
@@ -107,7 +107,7 @@ router.get('/log/:id', (req, res) => {
 * UPDATE Individual Logs
 ****************************************/
 
-router.put('/log/:id', (req, res) => {
+router.put('/log/:id', validateSession, (req, res) => {
 
     const logFromRequest = {
         "description": req.body.description,
@@ -127,7 +127,7 @@ router.put('/log/:id', (req, res) => {
 * Delete Individual Logs
 ****************************************/
 
-router.delete('/log/:id', (req, res) => {
+router.delete('/log/:id', validateSession, (req, res) => {
 
     Log.destroy({where: {id: req.params.id}})
       .then(log => {res.status(200).json(log);})
