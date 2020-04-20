@@ -12,19 +12,20 @@ app.use(require('./middleware/headers'));
 
 app.use('/api/user', apiuser);
 
-app.use(require('./middleware/validate-session'));
+// app.use(require('./middleware/validate-session'));  // 4/16/20 - Was calling this here, but really already have validateSession on each of the put, delete, etc. inside of the controller below,
+// EXCEPT for login, as we can't have it there as the React client isn't sending a token.
 
 /*****************************************************
  * PROTECTED ROUTES 
  * Those controllers called after the validate-session
  * above require an incoming request to have a token.
- *****************************************************/
+ ******************************************************/
 
 app.use('/api', api);
 
 
-app.listen(3002, function() {
-    console.log('App is listening on 3002.');
+app.listen(3000, function() {
+    console.log('*App is listening on 3000.*');
 });
 
 

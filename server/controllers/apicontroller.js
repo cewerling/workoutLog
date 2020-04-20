@@ -51,10 +51,11 @@ router.post('/login', (req, res) => {
 router.post('/log', validateSession, (req, res) => {
 
     const logFromRequest = {
-        "description": req.body.description,
-        "definition": req.body.definition,
-        "result": req.body.result,
-        "owner": req.body.owner
+        "description": req.body.log.description,
+        "definition": req.body.log.definition,
+        "result": req.body.log.result,
+        "owner": req.user.id
+        // "owner": req.body.owner
     }
     console.dir(logFromRequest);
     Log.create(logFromRequest)
@@ -73,7 +74,8 @@ router.post('/log', validateSession, (req, res) => {
 router.get('/log', validateSession, (req, res) => {
 
     Log.findAll({
-        where: {owner: req.body.owner}
+        where: {owner: req.user.id}
+        // where: {owner: req.body.owner}
     })
       .then(log => res.status(200).json(log))
       .catch(err => res.status(500).json({error:err}))
@@ -91,7 +93,8 @@ router.get('/log/:id', validateSession, (req, res) => {
 
     Log.findAll({
         where: {
-            owner: req.body.owner,
+            // owner: req.body.owner,
+            owner: req.user.id,
             id: req.params.id
         }
     })
@@ -110,11 +113,11 @@ router.get('/log/:id', validateSession, (req, res) => {
 router.put('/log/:id', validateSession, (req, res) => {
 
     const logFromRequest = {
-        "description": req.body.description,
-        "definition": req.body.definition,
-        "result": req.body.result
+        "description": req.body.log.description,
+        "definition": req.body.log.definition,
+        "result": req.body.log.result
     }
-    Log.update(logFromRequest, {where: {id: req.params.id}})
+    Log.update(logFromRequest, {where: {owner: req.user.id, id: req.params.id}})
       .then(log => {res.status(200).json(log);})
       .catch(err => res.json(req.errors))
 
@@ -129,7 +132,7 @@ router.put('/log/:id', validateSession, (req, res) => {
 
 router.delete('/log/:id', validateSession, (req, res) => {
 
-    Log.destroy({where: {id: req.params.id}})
+    Log.destroy({where: {owner: req.user.id, id: req.params.id}})
       .then(log => {res.status(200).json(log);})
       .catch(err => res.json(req.errors))
 
